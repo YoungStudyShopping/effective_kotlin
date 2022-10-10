@@ -1,0 +1,29 @@
+# 제네릭 타입과 variance 한정자를 활용하라
+- 타입 파라미터 T는 variance 한정자(out 또는 in)가 없으므로, 기본적으로 invariant(불공변성)
+- invariant라는 것은 제네릭 타입으로 만 들어지는 타입들이 서로 관련성이 없다는 의미
+- 약에 어떤 관련성을 원한다면, out 또는 in이라는 variance 한정자를 붙임
+- out은 타입 파라미터를 covariant(공변성)로 만듦. 이는 A가 B의 서브 타입일 때, Cup<A>가 Cup<B>의 서브타입이라는 의미
+- in 한정자는 반대 의미. in 한정자는 타입 파라미터를 contravariant(반 변성)으로 만듭니다. 이는 A7} B의 서브타입일 때, Cup<A>가 Cup<B>의 슈퍼타입이라는 것을 의미
+- 코틀린 함수 타입의 모든 파라미터 타입은 contravariant. 또한 모든 리턴 타입은 covariant
+- 함수 타입을 사용할 때는 이처럼 자동으로 variance 한정자가 사용됨
+- 자바의 배열은 covariant
+- 코틀린은 이러한 결함을 해결하기 위해서 Array(IntArray, CharArray 등) 를 invarian로 만듦
+    - 따라서 Array<Int>를 Array<Any> 등으로 바꿀 수 없음
+- 코틀린은 public in 한정자 위치에 covariant 타입 파라미터 (out 한정자)가 오는 것을 금지
+- 가시성을 private로 제한하면, 오류가 발생하지 않음. 객체 내부에서는 업 캐스트 객체에 covariant(out 한정자)를 사용할수 없기 때문
+- covariant(out 한정자)는 public out 한정자 위치에서도 안전하므로 따로 제한되지 않음. 이러한 안정성의 이유로 생성되거나 노출되는 타입에만 covariant(out 한정자)를 사용
+- Mutablelist<T>에서 T는 in 한정자 위치에서 사용되며, 안전하지 않으므로 invariant 임
+- 코틀린은 contravariant 타입 파라미터 (in 한정자)를 public out 한정자 위치에 사용하는 것을 금지
+- variance 한정자는 크게 두 위치예 사용할 수 있음
+    - 첫 번째는 선언 부분. 일반적으로 이 위치에 사용함. 이 위치에서 사용하면 클래스와 인터 페이스 선언에 한정자가 적용됨. 따라서 클래스와 인터페이스가 사용되는 모든 곳에 영향을 줌
+    - 두 번째는 클래스와 인터페이스를 활용하는 위치. 모든 인스턴스에 variance 한정자를 적용하면 안되고, 특정 인스턴스에만 적용해야 할 때 이런 코드를 사용
+- 정리
+    - 코틀린에는 다움과 같온 타입 한정자가 존재
+        - 타입 파라미터의 기본적인 variance의 동작은 invariant
+        - out 한정자는 타입 파라미터를 covariant 하게 만듦
+        - in 한정자는 타입 파라미터를 contravariant하게 만듦
+    - 코틀린에서는
+        - List와 Set의 타입 파라미터는 covariant(out 한정자)
+        - 함수 타입의 파라미터 타입은 contravariant(in 한정자). 그리고 리턴 타입은 contravariant(out 한정자)
+        - 리턴만 되는 타입 에는 covariant(out 한정자)를 사용
+        - 허용만 되는 타입 에는 contravariant(in 한정자)를 사용
